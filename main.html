@@ -1,0 +1,64 @@
+<script>
+
+
+
+var def = document.querySelector('.definition');
+var qword = document.querySelector('.qword');
+var url;
+var form = document.querySelector('form');
+var apiKey = "5a1d59fba2c80d6e9a20b0c83da02b0a4c862a9668479c8f2";
+
+function makeUrl(word){
+  return "https://api.wordnik.com/v4/word.json/"+ word + "/definitions" +
+  "?useCanonical=false" +
+  "&limit=200" +
+  "&api_key=" + apiKey;     
+} 
+function makeRequest() {
+  xhr = new XMLHttpRequest();
+  
+  xhr.onload = function() {
+    if(xhr.status === 200){
+      var response = JSON.parse(this.responseText);
+        if (response[0]===undefined){
+          def.innerHTML = "單字拼錯囉！！！";
+        }else{
+    
+          qword.innerHTML = response[0].word;
+
+          def.innerHTML = "1. "+ response[0].text+"<br>2. "+ response[1].text;
+        }
+
+    }else if (xhr.status === 404){
+      def.innerHTML = "請輸入一個英文單字";
+    }
+  };
+  xhr.open("GET", url, true);
+  xhr.send();
+}
+
+form.addEventListener('submit',function(e){
+
+  e.preventDefault();
+  alert("test")
+
+  var input = e.target[0].value;
+  
+  url = makeUrl(input);
+
+  makeRequest();
+  
+
+  e.target[0].value = '';
+
+})
+</script>
+<form>
+    <label for="submitword">Enter Word Here</label>
+    <input id="submitword" type="text" name="name">
+    <input type="submit" value="submit">
+  </form>
+  
+  <h1 class="title">Meaning of <span style="color:blue" class="qword"></span> </h1>
+  
+  <p class="definition"></p>
